@@ -83,6 +83,14 @@ RSpec.configure do |config|
   end
 end
 
+def initialize_orm(orm)
+  RailsJwtAuth.model_name = "#{orm}User"
+
+  # reset values to force initialize
+  RailsJwtAuth.class_variable_set(:@@model, nil)
+  RailsJwtAuth.class_variable_set(:@@table_name, nil)
+end
+
 def get_record_error(record, field)
   return nil unless record && field
 
