@@ -2,8 +2,10 @@ module RailsJwtAuth
   class ConfirmationsController < ApplicationController
     include ParamsHelper
     include RenderHelper
+    include SetUserFromEmail
 
     before_action :set_user_from_token, only: [:show, :update]
+    before_action :set_user_from_email, only: [:create]
 
     # used to verify token
     def show
@@ -18,11 +20,13 @@ module RailsJwtAuth
 
     # used to resend confirmation
     def create
-      user = RailsJwtAuth.model.where(
-        email: confirmation_create_params[RailsJwtAuth.email_field_name]
-      ).first
-
-      return render_422(email: [{error: :not_found}]) unless user
+      unless @user
+        if RailsJwtAuth.avoid_email_errors
+          return render_204
+        else
+          return render_422(RailsJwtAuth.email_field_name => [{error: :not_found}])
+        end
+      end
 
       user.send_confirmation_instructions ? render_204 : render_422(user.errors.details)
     end
