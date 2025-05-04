@@ -7,7 +7,7 @@ gemspec
 
 gem 'factory_bot'
 gem 'mongoid'
-gem 'rspec-rails'
+gem 'rspec-rails', '~> 7'
 gem 'sqlite3'
 
 group :development, :test do
